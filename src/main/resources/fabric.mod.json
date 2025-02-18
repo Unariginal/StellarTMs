@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "stellartms",
+  "version": "${version}",
+  "name": "StellarTMs",
+  "description": "Server-side TMs mod",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/stellartms/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "me.unariginal.stellartms.StellarTMs"
+    ]
+  },
+  "mixins": [
+    "stellartms.mixins.json",
+    {
+      "config": "stellartms.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "cobblemon": "1.6.1+1.21.1"
+  }
+}
