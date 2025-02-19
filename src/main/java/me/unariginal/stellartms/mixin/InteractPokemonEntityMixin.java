@@ -1,85 +1,64 @@
 package me.unariginal.stellartms.mixin;
 
-import com.bedrockk.molang.runtime.struct.QueryStruct;
-import com.cobblemon.mod.common.api.entity.EntitySideDelegate;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
-import com.cobblemon.mod.common.api.scheduling.Schedulable;
-import com.cobblemon.mod.common.api.scheduling.ScheduledTask;
-import com.cobblemon.mod.common.api.scheduling.SchedulingTracker;
 import com.cobblemon.mod.common.api.types.ElementalType;
-import com.cobblemon.mod.common.entity.PosableEntity;
-import com.cobblemon.mod.common.entity.PoseType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.pokedex.scanner.PokedexEntityData;
-import com.cobblemon.mod.common.pokedex.scanner.ScannableEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import me.unariginal.stellartms.StellarTMs;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Shearable;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.passive.TameableShoulderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.concurrent.CompletableFuture;
-
 @Mixin(PokemonEntity.class)
-public abstract class InteractPokemonEntityMixin extends TameableShoulderEntity implements PosableEntity, Shearable, Schedulable, ScannableEntity {
-    protected InteractPokemonEntityMixin(EntityType<? extends TameableShoulderEntity> entityType, World world) {
-        super(entityType, world);
-    }
-
+public abstract class InteractPokemonEntityMixin /*extends TameableShoulderEntity implements PosableEntity, Shearable, Schedulable, ScannableEntity*/ {
     @Inject(method = "interactMob", at = @At("HEAD"))
     private void injected(PlayerEntity playerEntity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+        StellarTMs.instance.LOGGER.info("Interaction Detected");
         if (!pokemonEntity.isBattling() && pokemonEntity.isBattleClone()) {
+            StellarTMs.instance.LOGGER.info("Battling Detected, Cancelling injection");
             return;
         }
         ItemStack itemStack = playerEntity.getStackInHand(hand);
         if (pokemonEntity.getOwnerUuid() == playerEntity.getUuid()) {
+            StellarTMs.instance.LOGGER.info("Player is the owner");
             if (itemStack.getItem() == Items.BRICK || itemStack.getItem() == Items.NETHER_BRICK) {
+                StellarTMs.instance.LOGGER.info("Brick Detected");
                 if (itemStack.contains(DataComponentTypes.CUSTOM_DATA) && itemStack.get(DataComponentTypes.CUSTOM_DATA) != null) {
                     NbtCompound nbt = itemStack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();
                     if (nbt.contains("stellar_item_type") && nbt.getString("stellar_item_type") != null) {
+                        StellarTMs.instance.LOGGER.info("Stellar Detected");
                         boolean isTR = (nbt.getString("stellar_item_type").equalsIgnoreCase("tr"));
                         if ((nbt.contains("stellar_move") && nbt.getString("stellar_move") != null)) {
                             String move_str = nbt.getString("stellar_move");
                             Pokemon pokemon = pokemonEntity.getPokemon();
                             if (!move_str.equalsIgnoreCase("blank")) {
+                                StellarTMs.instance.LOGGER.info("Not blank");
                                 MoveTemplate move = Moves.INSTANCE.getByName(move_str);
                                 if (move != null) {
-                                    ElementalType type = move.getElementalType();
+                                    StellarTMs.instance.LOGGER.info("Move Detected");
                                     if (pokemon.getSpecies().getMoves().getTmMoves().contains(move)) {
+                                        StellarTMs.instance.LOGGER.info("Move can be learned");
                                         if (pokemon.getMoveSet().hasSpace()) {
                                             pokemon.getMoveSet().add(move.create());
                                         } else {
@@ -90,6 +69,8 @@ public abstract class InteractPokemonEntityMixin extends TameableShoulderEntity 
                                             itemStack.decrement(1);
                                         }
                                     }
+                                } else {
+                                    StellarTMs.instance.LOGGER.info("Uh oh, no move");
                                 }
                             } else {
                                 ServerPlayerEntity player = StellarTMs.instance.server.getPlayerManager().getPlayer(playerEntity.getUuid());
@@ -172,12 +153,13 @@ public abstract class InteractPokemonEntityMixin extends TameableShoulderEntity 
                                                 tm_to_give = new ItemStack(Items.BRICK);
                                                 nbtCompound.putString("stellar_item_type", "tm");
                                             }
-                                            nbtCompound.putString("stellar_move", move.toString());
-                                            tm_to_give.applyComponentsFrom(ComponentMap.builder().add(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbtCompound)).build());
+                                            nbtCompound.putString("stellar_move", move.getName());
+                                            tm_to_give.applyComponentsFrom(ComponentMap.builder().add(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(model_data)).add(DataComponentTypes.ITEM_NAME, move.getDisplayName()).add(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbtCompound)).build());
 
                                             if (!playerEntity.isCreative()) {
                                                 itemStack.decrement(1);
                                             }
+                                            player.giveItemStack(tm_to_give);
 
                                             gui.close();
                                         }).build();
@@ -195,85 +177,5 @@ public abstract class InteractPokemonEntityMixin extends TameableShoulderEntity 
                 }
             }
         }
-    }
-
-    @Override
-    public @NotNull SchedulingTracker getSchedulingTracker() {
-        return null;
-    }
-
-    @Override
-    public @NotNull ScheduledTask momentarily(@NotNull Function0<Unit> function0) {
-        return null;
-    }
-
-    @Override
-    public @NotNull ScheduledTask after(float v, @NotNull Function0<Unit> function0) {
-        return null;
-    }
-
-    @Override
-    public @NotNull ScheduledTask lerp(float v, @NotNull Function1<? super Float, Unit> function1) {
-        return null;
-    }
-
-    @Override
-    public @NotNull CompletableFuture<Unit> delayedFuture(float v) {
-        return null;
-    }
-
-    @Override
-    public @NotNull ScheduledTask.Builder taskBuilder() {
-        return null;
-    }
-
-    @Override
-    public @NotNull PoseType getCurrentPoseType() {
-        return null;
-    }
-
-    @Override
-    public @NotNull EntitySideDelegate<?> getDelegate() {
-        return null;
-    }
-
-    @Override
-    public @NotNull QueryStruct getStruct() {
-        return null;
-    }
-
-    @Override
-    public void addPosableFunctions(@NotNull QueryStruct queryStruct) {
-
-    }
-
-    @Override
-    public @Nullable PokedexEntityData resolvePokemonScan() {
-        return null;
-    }
-
-    @Override
-    public @NotNull LivingEntity resolveEntityScan() {
-        return null;
-    }
-
-    @Override
-    public boolean isBreedingItem(ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public @Nullable PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-        return null;
-    }
-
-    @Override
-    public void sheared(SoundCategory shearedSoundCategory) {
-
-    }
-
-    @Override
-    public boolean isShearable() {
-        return false;
     }
 }

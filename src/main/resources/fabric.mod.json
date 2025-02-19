@@ -15,11 +15,7 @@
     ]
   },
   "mixins": [
-    "stellartms.mixins.json",
-    {
-      "config": "stellartms.client.mixins.json",
-      "environment": "client"
-    }
+    "stellartms.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
