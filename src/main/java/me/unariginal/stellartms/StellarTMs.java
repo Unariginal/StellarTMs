@@ -1,19 +1,13 @@
 package me.unariginal.stellartms;
 
-import com.cobblemon.mod.common.api.moves.MoveTemplate;
-import com.cobblemon.mod.common.api.moves.Moves;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.CustomModelDataComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -29,6 +23,7 @@ public class StellarTMs implements ModInitializer {
     public final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static StellarTMs instance;
     public MinecraftServer server;
+    public Config config;
 
     @Override
     public void onInitialize() {
@@ -38,6 +33,7 @@ public class StellarTMs implements ModInitializer {
                     CommandManager.literal("stellartms")
                                     .then(
                                             CommandManager.literal("give")
+                                                    .requires(Permissions.require("stellartms.give", 4))
                                                     .then(
                                                             CommandManager.literal("tm")
                                                                     .then(
@@ -53,95 +49,39 @@ public class StellarTMs implements ModInitializer {
                                                                     )
                                                     )
                                     )
+                            .then(
+                                    CommandManager.literal("reload")
+                                            .requires(Permissions.require("stellartms.reload", 4))
+                                            .executes(ctx -> {
+                                                config = new Config();
+                                                ctx.getSource().sendMessage(Text.literal("[StellarTMs] Reloaded!"));
+                                                return 1;
+                                            })
+                            )
             );
         });
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> this.server = server);
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            this.server = server;
+            this.config = new Config();
+        });
     }
 
     private int giveTR(CommandContext<ServerCommandSource> ctx) {
-        ItemStack tm_to_give = new ItemStack(Items.NETHER_BRICK);
         String move = StringArgumentType.getString(ctx, "move");
-
-        return giveItem(tm_to_give, move, "tr", ctx.getSource().getPlayer());
+        if (ctx.getSource().isExecutedByPlayer()) {
+            Objects.requireNonNull(ctx.getSource().getPlayer()).giveItemStack(config.settings.getItem(move, "tr"));
+            return 1;
+        }
+        return 0;
     }
 
     private int giveTM(CommandContext<ServerCommandSource> ctx) {
-        ItemStack tm_to_give = new ItemStack(Items.BRICK);
         String move = StringArgumentType.getString(ctx, "move");
-        return giveItem(tm_to_give, move, "tm", ctx.getSource().getPlayer());
-    }
-
-    private int giveItem(ItemStack item, String move, String type, ServerPlayerEntity player) {
-        NbtCompound nbtCompound = new NbtCompound();
-        nbtCompound.putString("stellar_item_type", type);
-        nbtCompound.putString("stellar_move", move);
-
-        int model_data = 10000;
-        if (!move.equalsIgnoreCase("blank")) {
-            switch (Objects.requireNonNull(Moves.INSTANCE.getByName(move)).create().getType().getName()) {
-                case "normal":
-                    model_data = 10001;
-                    break;
-                case "fire":
-                    model_data = 10002;
-                    break;
-                case "water":
-                    model_data = 10003;
-                    break;
-                case "electric":
-                    model_data = 10004;
-                    break;
-                case "grass":
-                    model_data = 10005;
-                    break;
-                case "ice":
-                    model_data = 10006;
-                    break;
-                case "fighting":
-                    model_data = 10007;
-                    break;
-                case "poison":
-                    model_data = 10008;
-                    break;
-                case "ground":
-                    model_data = 10009;
-                    break;
-                case "flying":
-                    model_data = 10010;
-                    break;
-                case "psychic":
-                    model_data = 10011;
-                    break;
-                case "bug":
-                    model_data = 10012;
-                    break;
-                case "rock":
-                    model_data = 10013;
-                    break;
-                case "ghost":
-                    model_data = 10014;
-                    break;
-                case "dragon":
-                    model_data = 10015;
-                    break;
-                case "dark":
-                    model_data = 10016;
-                    break;
-                case "steel":
-                    model_data = 10017;
-                    break;
-                case "fairy":
-                    model_data = 10018;
-                    break;
-                default:
-                    return 0;
-            }
+        if (ctx.getSource().isExecutedByPlayer()) {
+            Objects.requireNonNull(ctx.getSource().getPlayer()).giveItemStack(config.settings.getItem(move, "tm"));
+            return 1;
         }
-        item.applyComponentsFrom(ComponentMap.builder().add(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(model_data)).add(DataComponentTypes.ITEM_NAME, (!move.equalsIgnoreCase("blank")) ? (Objects.requireNonNull(Moves.INSTANCE.getByName(move)).create().getDisplayName()) : Text.literal("Blank " + type.toUpperCase())).add(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbtCompound)).build());
-
-        player.giveItemStack(item);
-
-        return 1;
+        return 0;
     }
 }
