@@ -1,15 +1,11 @@
 package me.unariginal.stellartms;
 
-import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import me.unariginal.stellartms.data.DataComponents;
 import me.unariginal.stellartms.handler.ItemHandler;
-import me.unariginal.stellartms.items.TM;
-import me.unariginal.stellartms.items.TR;
-import me.unariginal.stellartms.utils.TextUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
