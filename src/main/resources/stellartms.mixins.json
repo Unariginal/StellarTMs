@@ -1,10 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "me.unariginal.stellartms.mixin",
+  "package": "me.unariginal.stellartms.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "InteractPokemonEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

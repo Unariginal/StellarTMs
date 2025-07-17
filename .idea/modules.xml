@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StellarTMs.client.iml" filepath="$PROJECT_DIR$/.idea/modules/StellarTMs.client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StellarTMs.main.iml" filepath="$PROJECT_DIR$/.idea/modules/StellarTMs.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StellarTMs.test.iml" filepath="$PROJECT_DIR$/.idea/modules/StellarTMs.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/me.unariginal.StellarTMs.main.iml" filepath="$PROJECT_DIR$/.idea/modules/me.unariginal.StellarTMs.main.iml" />
     </modules>
   </component>
 </project>

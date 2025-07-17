@@ -43,6 +43,9 @@ dependencies {
     include(modImplementation('me.lucko:fabric-permissions-api:0.3.1'))
 
     modImplementation include("eu.pb4:sgui:1.6.1+1.21.1")
+    modImplementation include("eu.pb4:polymer-core:0.9.18+1.21.1")
+    modImplementation include("eu.pb4:polymer-resource-pack:0.9.18+1.21.1")
+
     modImplementation "com.cobblemon:fabric:1.6.1+1.21.1"
 
     modImplementation include("net.kyori:adventure-text-minimessage:4.17.0")
