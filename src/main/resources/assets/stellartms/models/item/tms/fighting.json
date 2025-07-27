@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "genesisforms:item/tms/fighting"
+    "layer0": "stellartms:item/tms/fighting"
   }
 }

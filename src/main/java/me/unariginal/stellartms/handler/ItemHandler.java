@@ -21,8 +21,16 @@ public class ItemHandler {
     public static TR StellarTR;
 
     public static void registerItems() {
-        StellarTM = Registry.register(Registries.ITEM, Identifier.of(StellarTMs.MOD_ID, "tm"), new TM(settings.component(DataComponents.MOVE, "blank"), Items.BRICK));
-        StellarTR = Registry.register(Registries.ITEM, Identifier.of(StellarTMs.MOD_ID, "tr"), new TR(settings.component(DataComponents.MOVE, "blank"), Items.NETHER_BRICK));
+        Item baseTMItem = Items.BRICK;
+        Item baseTRItem = Items.NETHER_BRICK;
+        if (Registries.ITEM.containsId(Identifier.of(StellarTMs.INSTANCE.config.tm_base_item))) {
+            baseTMItem = Registries.ITEM.get(Identifier.of(StellarTMs.INSTANCE.config.tm_base_item));
+        }
+        if (Registries.ITEM.containsId(Identifier.of(StellarTMs.INSTANCE.config.tr_base_item))) {
+            baseTRItem = Registries.ITEM.get(Identifier.of(StellarTMs.INSTANCE.config.tr_base_item));
+        }
+        StellarTM = Registry.register(Registries.ITEM, Identifier.of(StellarTMs.MOD_ID, "tm"), new TM(settings.component(DataComponents.MOVE, "blank"), baseTMItem));
+        StellarTR = Registry.register(Registries.ITEM, Identifier.of(StellarTMs.MOD_ID, "tr"), new TR(settings.component(DataComponents.MOVE, "blank"), baseTRItem));
     }
 
     public static void registerItemGroup() {
