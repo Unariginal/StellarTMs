@@ -97,8 +97,14 @@ public class TR extends SimplePolymerItem implements PokemonSelectingItem {
             }
         }
 
-        for (String line : StellarTMs.INSTANCE.config.tr_item_lore) {
-            tooltip.add(TextUtils.deserialize(TextUtils.parse(line, moveTemplate)));
+        if (moveTemplate != null) {
+            for (String line : StellarTMs.INSTANCE.config.tr_item_lore) {
+                tooltip.add(TextUtils.deserialize(TextUtils.parse(line, moveTemplate)));
+            }
+        } else {
+            for (String line : StellarTMs.INSTANCE.config.blank_tr_item_lore) {
+                tooltip.add(TextUtils.deserialize(TextUtils.parse(line, moveTemplate)));
+            }
         }
     }
 

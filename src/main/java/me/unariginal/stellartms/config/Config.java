@@ -12,12 +12,14 @@ public class Config {
     public boolean ignore_learnset = false;
     public String tm_base_item = "minecraft:brick";
     public String tm_item_name = "%move_color%TM: %move%";
-    public String blank_tm_item_name = "<gray>Blank TM";
     public List<String> tm_item_lore = new ArrayList<>();
+    public String blank_tm_item_name = "<gray>Blank TM";
+    public List<String> blank_tm_item_lore = new ArrayList<>();
     public String tr_base_item = "minecraft:nether_brick";
     public String tr_item_name = "%move_color%TR: %move%";
-    public String blank_tr_item_name = "<gray>Blank TR";
     public List<String> tr_item_lore = new ArrayList<>();
+    public String blank_tr_item_name = "<gray>Blank TR";
+    public List<String> blank_tr_item_lore = new ArrayList<>();
     public String gui_title = "<gold>Pick A Move!";
     public String move_learned_overlay = "<green>%pokemon% has learned %move_color%%move%<green>!";
     public String unable_to_learn_overlay = "<red>%pokemon% cannot learn %move_color%%move%<red>!";
@@ -68,11 +70,6 @@ public class Config {
         }
         newRoot.addProperty("tm_item_name", tm_item_name);
 
-        if (root.has("blank_tm_item_name")) {
-            blank_tm_item_name = root.get("blank_tm_item_name").getAsString();
-        }
-        newRoot.addProperty("blank_tm_item_name", blank_tm_item_name);
-
         if (root.has("tm_item_lore")) {
             tm_item_lore.clear();
             JsonArray lore = root.get("tm_item_lore").getAsJsonArray();
@@ -86,6 +83,24 @@ public class Config {
         }
         newRoot.add("tm_item_lore", lore);
 
+        if (root.has("blank_tm_item_name")) {
+            blank_tm_item_name = root.get("blank_tm_item_name").getAsString();
+        }
+        newRoot.addProperty("blank_tm_item_name", blank_tm_item_name);
+
+        if (root.has("blank_tm_item_lore")) {
+            blank_tm_item_lore.clear();
+            lore = root.get("blank_tm_item_lore").getAsJsonArray();
+            for (JsonElement element : lore) {
+                blank_tm_item_lore.add(element.getAsString());
+            }
+        }
+        lore = new JsonArray();
+        for (String line : blank_tm_item_lore) {
+            lore.add(line);
+        }
+        newRoot.add("blank_tm_item_lore", lore);
+
         if (root.has("tr_base_item")) {
             tr_base_item = root.get("tr_base_item").getAsString();
         }
@@ -95,11 +110,6 @@ public class Config {
             tr_item_name = root.get("tr_item_name").getAsString();
         }
         newRoot.addProperty("tr_item_name", tr_item_name);
-
-        if (root.has("blank_tr_item_name")) {
-            blank_tr_item_name = root.get("blank_tr_item_name").getAsString();
-        }
-        newRoot.addProperty("blank_tr_item_name", blank_tr_item_name);
 
         if (root.has("tr_item_lore")) {
             tr_item_lore.clear();
@@ -113,6 +123,24 @@ public class Config {
             lore.add(line);
         }
         newRoot.add("tr_item_lore", lore);
+
+        if (root.has("blank_tr_item_name")) {
+            blank_tr_item_name = root.get("blank_tr_item_name").getAsString();
+        }
+        newRoot.addProperty("blank_tr_item_name", blank_tr_item_name);
+
+        if (root.has("blank_tr_item_lore")) {
+            blank_tr_item_lore.clear();
+            lore = root.get("blank_tr_item_lore").getAsJsonArray();
+            for (JsonElement element : lore) {
+                blank_tr_item_lore.add(element.getAsString());
+            }
+        }
+        lore = new JsonArray();
+        for (String line : blank_tr_item_lore) {
+            lore.add(line);
+        }
+        newRoot.add("blank_tr_item_lore", lore);
 
         if (root.has("gui_title")) {
             gui_title = root.get("gui_title").getAsString();
