@@ -20,13 +20,14 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import me.unariginal.stellartms.StellarTMs;
 import me.unariginal.stellartms.data.DataComponents;
 import me.unariginal.stellartms.handler.ItemHandler;
-import me.unariginal.stellartms.utils.NbtUtils;
 import me.unariginal.stellartms.utils.TextUtils;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -53,57 +54,41 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
     }
 
     @Override
-    public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        if (itemStack.getComponents().contains(DataComponents.MOVE)) {
-            String moveComponent = itemStack.getComponents().get(DataComponents.MOVE);
-            if (moveComponent != null) {
-                MoveTemplate moveTemplate = Moves.INSTANCE.getByName(moveComponent);
-                if (moveComponent.equalsIgnoreCase("blank") || moveTemplate == null) {
-                    NbtUtils.setItemName(itemStack, StellarTMs.INSTANCE.config.blank_tm_item_name);
-                } else {
-                    NbtUtils.setItemName(itemStack, TextUtils.parse(StellarTMs.INSTANCE.config.tm_item_name, moveTemplate));
-                }
-            }
-        }
-        return super.getPolymerItem(itemStack, player);
+    public ItemStack getPolymerItemStack(ItemStack original, TooltipType tooltipType, RegistryWrapper.WrapperLookup lookup, @Nullable ServerPlayerEntity viewer) {
+        ItemStack out = super.getPolymerItemStack(original, tooltipType, lookup, viewer);
+        String moveName = original.getComponents().get(DataComponents.MOVE);
+        MoveTemplate mt = (moveName != null) ? Moves.INSTANCE.getByName(moveName) : null;
+        out.set(DataComponentTypes.CUSTOM_NAME, buildDisplayName(mt));
+
+        return out;
     }
 
-    private String getType(MoveTemplate moveTemplate) {
-        if (moveTemplate == null) return "blank";
-        return moveTemplate.getElementalType().getName().toLowerCase();
+    private static Text buildDisplayName(@Nullable MoveTemplate mt) {
+        if (mt == null) {
+            return TextUtils.deserialize(StellarTMs.INSTANCE.config.blank_tm_item_name);
+        }
+        return TextUtils.deserialize(TextUtils.parse(StellarTMs.INSTANCE.config.tm_item_name, mt));
     }
+
 
     @Override
     public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        if (itemStack.getComponents().contains(DataComponents.MOVE)) {
-            String moveComponent = itemStack.getComponents().get(DataComponents.MOVE);
-            if (moveComponent != null) {
-                MoveTemplate moveTemplate = Moves.INSTANCE.getByName(moveComponent);
-                return typeModelData.get(getType(moveTemplate)).value();
-            }
-        }
-        return typeModelData.get("blank").value();
+        String moveName = itemStack.getComponents().get(DataComponents.MOVE);
+        MoveTemplate mt = (moveName != null) ? Moves.INSTANCE.getByName(moveName) : null;
+        String key = (mt == null) ? "blank" : mt.getElementalType().getName().toLowerCase();
+        return typeModelData.get(key).value();
     }
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        MoveTemplate moveTemplate = null;
-        if (stack.getComponents().contains(DataComponents.MOVE)) {
-            String moveComponent = stack.getComponents().get(DataComponents.MOVE);
-            if (moveComponent != null) {
-                moveTemplate = Moves.INSTANCE.getByName(moveComponent);
-            }
-        }
 
-        if (moveTemplate != null) {
-            for (String line : StellarTMs.INSTANCE.config.tm_item_lore) {
-                tooltip.add(TextUtils.deserialize(TextUtils.parse(line, moveTemplate)));
-            }
-        } else {
-            for (String line : StellarTMs.INSTANCE.config.blank_tm_item_lore) {
-                tooltip.add(TextUtils.deserialize(TextUtils.parse(line, moveTemplate)));
-            }
+        String moveName = stack.getComponents().get(DataComponents.MOVE);
+        MoveTemplate move = (moveName != null) ? Moves.INSTANCE.getByName(moveName) : null;
+        List<String> loreTemplate = (move != null) ? StellarTMs.INSTANCE.config.tm_item_lore : StellarTMs.INSTANCE.config.blank_tm_item_lore;
+
+        for (String line : loreTemplate) {
+            tooltip.add(TextUtils.deserialize(TextUtils.parse(line, move)));
         }
     }
 
