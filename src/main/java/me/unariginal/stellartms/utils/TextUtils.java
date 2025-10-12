@@ -25,7 +25,7 @@ public class TextUtils {
 
     public static String parse(String text, Pokemon pokemon) {
         text = parse(text);
-        return text.replaceAll("%pokemon%", pokemon.getDisplayName().getString());
+        return text.replaceAll("%pokemon%", pokemon.getDisplayName(false).getString());
     }
 
     public static String parse(String text, ServerPlayerEntity player) {

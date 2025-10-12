@@ -108,12 +108,12 @@ public class TR extends SimplePolymerItem implements PokemonSelectingItem {
 
     @Override
     public @NotNull TypedActionResult<ItemStack> use(@NotNull ServerPlayerEntity serverPlayerEntity, @NotNull ItemStack itemStack) {
-        return PokemonSelectingItem.DefaultImpls.use(this, serverPlayerEntity, itemStack);
+        return PokemonSelectingItem.super.use(serverPlayerEntity, itemStack);
     }
 
     @Override
     public @Nullable TypedActionResult<ItemStack> applyToPokemon(@NotNull ServerPlayerEntity serverPlayerEntity, @NotNull ItemStack itemStack, @NotNull Pokemon pokemon) {
-        if (!this.canUseOnPokemon(pokemon)) return TypedActionResult.fail(itemStack);
+        if (!this.canUseOnPokemon(itemStack, pokemon)) return TypedActionResult.fail(itemStack);
         if (pokemon.isPlayerOwned()) {
             ServerPlayerEntity player = pokemon.getOwnerPlayer();
             if (player != null) {
@@ -190,13 +190,8 @@ public class TR extends SimplePolymerItem implements PokemonSelectingItem {
     }
 
     @Override
-    public boolean canUseOnPokemon(@NotNull Pokemon pokemon) {
+    public boolean canUseOnPokemon(@NotNull ItemStack stack, @NotNull Pokemon pokemon) {
         return true;
-    }
-
-    @Override
-    public boolean canUseOnBattlePokemon(@NotNull BattlePokemon battlePokemon) {
-        return false;
     }
 
     @Override
@@ -206,7 +201,7 @@ public class TR extends SimplePolymerItem implements PokemonSelectingItem {
 
     @Override
     public @NotNull TypedActionResult<ItemStack> interactGeneral(@NotNull ServerPlayerEntity serverPlayerEntity, @NotNull ItemStack itemStack) {
-        return PokemonSelectingItem.DefaultImpls.interactGeneral(this, serverPlayerEntity, itemStack);
+        return PokemonSelectingItem.super.interactGeneral(serverPlayerEntity, itemStack);
     }
 
     @Override
