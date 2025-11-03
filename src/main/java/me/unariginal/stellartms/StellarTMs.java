@@ -324,7 +324,7 @@ public class StellarTMs implements ModInitializer {
                         });
                     }
                 }
-                case "learnedby", "learnset" -> {
+                case "learnedby", "learnset", "learned" -> {
                     String[] split = finalFilterOption.split("#");
                     boolean containsTM = false;
                     boolean containsEgg = false;
@@ -365,31 +365,31 @@ public class StellarTMs implements ModInitializer {
                     }
                 }
             }
-
-            // Remove gimmick moves if we need to
-            boolean finalContainsZFilter = containsZFilter;
-            boolean finalContainsMaxFilter = containsMaxFilter;
-            boolean finalContainsGmaxFilter = containsGmaxFilter;
-            validMoveTemplates.removeIf(template -> {
-                boolean isZMove = config.zMoves.contains(template.getName().toLowerCase());
-                boolean isMaxMove = config.maxMoves.contains(template.getName().toLowerCase());
-                boolean isGMaxMove = config.gmaxMoves.contains(template.getName().toLowerCase());
-
-                if (!finalContainsZFilter && config.autoExcludeZMoves && isZMove) {
-                    return true;
-                }
-
-                if (!finalContainsMaxFilter && config.autoExcludeMaxMoves && isMaxMove) {
-                    return true;
-                }
-
-                if (!finalContainsGmaxFilter && config.autoExcludeGMaxMoves && isGMaxMove) {
-                    return true;
-                }
-
-                return false;
-            });
         }
+
+        // Remove gimmick moves if we need to
+        boolean finalContainsZFilter = containsZFilter;
+        boolean finalContainsMaxFilter = containsMaxFilter;
+        boolean finalContainsGmaxFilter = containsGmaxFilter;
+        validMoveTemplates.removeIf(template -> {
+            boolean isZMove = config.zMoves.contains(template.getName().toLowerCase());
+            boolean isMaxMove = config.maxMoves.contains(template.getName().toLowerCase());
+            boolean isGMaxMove = config.gmaxMoves.contains(template.getName().toLowerCase());
+
+            if (!finalContainsZFilter && config.autoExcludeZMoves && isZMove) {
+                return true;
+            }
+
+            if (!finalContainsMaxFilter && config.autoExcludeMaxMoves && isMaxMove) {
+                return true;
+            }
+
+            if (!finalContainsGmaxFilter && config.autoExcludeGMaxMoves && isGMaxMove) {
+                return true;
+            }
+
+            return false;
+        });
 
         return validMoveTemplates;
     }
