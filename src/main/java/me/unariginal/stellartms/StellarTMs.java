@@ -77,7 +77,8 @@ public class StellarTMs implements ModInitializer {
                                                                             .then(
                                                                                     CommandManager.literal("random")
                                                                                             .executes(ctx -> {
-                                                                                                MoveTemplate moveTemplate = Moves.INSTANCE.all().get(Random.Default.nextInt(Moves.INSTANCE.all().size()));
+                                                                                                List<MoveTemplate> validMoveTemplates = getValidMoves("");
+                                                                                                MoveTemplate moveTemplate = validMoveTemplates.get(Random.Default.nextInt(validMoveTemplates.size()));
                                                                                                 String move = moveTemplate.getName();
 
                                                                                                 List<ServerPlayerEntity> players = EntityArgumentType.getPlayers(ctx, "player").stream().toList();
@@ -125,7 +126,8 @@ public class StellarTMs implements ModInitializer {
                                                                             .then(
                                                                                     CommandManager.literal("random")
                                                                                             .executes(ctx -> {
-                                                                                                MoveTemplate moveTemplate = Moves.INSTANCE.all().get(Random.Default.nextInt(Moves.INSTANCE.all().size()));
+                                                                                                List<MoveTemplate> validMoveTemplates = getValidMoves("");
+                                                                                                MoveTemplate moveTemplate = validMoveTemplates.get(Random.Default.nextInt(validMoveTemplates.size()));
                                                                                                 String move = moveTemplate.getName();
 
                                                                                                 List<ServerPlayerEntity> players = EntityArgumentType.getPlayers(ctx, "player").stream().toList();
