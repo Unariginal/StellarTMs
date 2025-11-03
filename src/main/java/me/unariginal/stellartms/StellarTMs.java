@@ -337,7 +337,7 @@ public class StellarTMs implements ModInitializer {
                             containsLevel = true;
                     }
 
-                    Species species = PokemonSpecies.INSTANCE.getByName(finalFilterOption);
+                    Species species = PokemonSpecies.INSTANCE.getByName(split[0]);
                     if (species != null) {
                         List<MoveTemplate> validLearnsets = new ArrayList<>();
                         // If nothing, get everything :D
