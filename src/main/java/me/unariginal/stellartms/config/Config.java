@@ -29,6 +29,39 @@ public class Config {
     public String tm_give_message = "%prefix% <green>Gave %move_color%TM: %move% <green>to %player%!";
     public String tr_give_message = "%prefix% <green>Gave %move_color%TR: %move% <green>to %player%!";
 
+    public boolean autoExcludeZMoves = true;
+    public boolean autoExcludeMaxMoves = true;
+    public boolean autoExcludeGMaxMoves = true;
+    public List<String> zMoves = new ArrayList<>(List.of(
+            "10000000voltthunderbolt", "aciddownpour", "alloutpummeling",
+            "blackholeeclipse", "bloomdoom", "breakneckblitz", "catastropika",
+            "clangoroussoulblaze", "continentalcrush", "corkscrewcrash",
+            "devastatingdrake", "extremeevoboost", "genesissupernova", "gigavolthavoc",
+            "guardianofalola", "hydrovortex", "infernooverdrive", "letssnuggleforever",
+            "lightthatburnsthesky", "maliciousmoonsault", "menacingmoonrazemaelstrom",
+            "neverendingnightmare", "oceanicoperetta", "pulverizingpancake", "savagespinout",
+            "searingsunrazesmash", "shatteredpsyche", "sinisterarrowraid", "soulstealing7starstrike",
+            "splinteredstormshards", "stokedsparksurfer", "subzeroslammer", "supersonicskystrike",
+            "tectonicrage", "twinkletackle"
+    ));
+    public List<String> maxMoves = new ArrayList<>(List.of(
+            "maxairstream", "maxdarkness", "maxflare", "maxflutterby",
+            "maxgeyser", "maxguard", "maxhailstorm", "maxknuckle", "maxlightning",
+            "maxmindstorm", "maxooze", "maxovergrowth", "maxphantasm", "maxquake",
+            "maxrockfall", "maxspirit", "maxstarfall", "maxsteelspike", "maxstrike",
+            "maxwyrmwind"
+    ));
+    public List<String> gmaxMoves = new ArrayList<>(List.of(
+            "gmaxbefuddle", "gmaxcannonade", "gmaxcentiferno", "gmaxchistrike",
+            "gmaxcuddle", "gmaxdepletion", "gmaxdrumsolo", "gmaxfinale",
+            "gmaxfireball", "gmaxfoamburst", "gmaxgoldrush", "gmaxgravitas",
+            "gmaxhydrosnipe", "gmaxmalodor", "gmaxmeltdown", "gmaxoneblow",
+            "gmaxrapidflow", "gmaxreplenish", "gmaxresonance", "gmaxsandblast",
+            "gmaxsmite", "gmaxsnooze", "gmaxsteelsurge", "gmaxstonesurge", "gmaxstunshock",
+            "gmaxsweetness", "gmaxtartness", "gmaxterror", "gmaxvinelash", "gmaxvolcalith",
+            "gmaxvoltcrash", "gmaxwildfire", "gmaxwindrage"
+    ));
+
     public Config() {
         try {
             loadConfig();
@@ -181,6 +214,54 @@ public class Config {
             tr_give_message = root.get("tr_give_message").getAsString();
         }
         newRoot.addProperty("tr_give_message", tr_give_message);
+
+        JsonObject filterOptions = new JsonObject();
+        if (root.has("filter_options"))
+            filterOptions = root.get("filter_options").getAsJsonObject();
+
+        if (filterOptions.has("auto_exclude_z_moves"))
+            autoExcludeZMoves = filterOptions.get("auto_exclude_z_moves").getAsBoolean();
+        filterOptions.remove("auto_exclude_z_moves");
+        filterOptions.addProperty("auto_exclude_z_moves", autoExcludeZMoves);
+
+        if (filterOptions.has("auto_exclude_max_moves"))
+            autoExcludeMaxMoves = filterOptions.get("auto_exclude_max_moves").getAsBoolean();
+        filterOptions.remove("auto_exclude_max_moves");
+        filterOptions.addProperty("auto_exclude_max_moves", autoExcludeMaxMoves);
+
+        if (filterOptions.has("auto_exclude_gmax_moves"))
+            autoExcludeGMaxMoves = filterOptions.get("auto_exclude_gmax_moves").getAsBoolean();
+        filterOptions.remove("auto_exclude_gmax_moves");
+        filterOptions.addProperty("auto_exclude_gmax_moves", autoExcludeGMaxMoves);
+
+        if (filterOptions.has("z_moves"))
+            zMoves = filterOptions.getAsJsonArray("z_moves").asList().stream().map(JsonElement::getAsString).toList();
+        filterOptions.remove("z_moves");
+        JsonArray zMovesArr = new JsonArray();
+        for (String move : zMoves) {
+            zMovesArr.add(move);
+        }
+        filterOptions.add("z_moves", zMovesArr);
+
+        if (filterOptions.has("max_moves"))
+            maxMoves = filterOptions.getAsJsonArray("max_moves").asList().stream().map(JsonElement::getAsString).toList();
+        filterOptions.remove("max_moves");
+        JsonArray maxMovesArr = new JsonArray();
+        for (String move : maxMoves) {
+            maxMovesArr.add(move);
+        }
+        filterOptions.add("max_moves", maxMovesArr);
+
+        if (filterOptions.has("gmax_moves"))
+            gmaxMoves = filterOptions.getAsJsonArray("gmax_moves").asList().stream().map(JsonElement::getAsString).toList();
+        filterOptions.remove("gmax_moves");
+        JsonArray gmaxMovesArr = new JsonArray();
+        for (String move : gmaxMoves) {
+            gmaxMovesArr.add(move);
+        }
+        filterOptions.add("gmax_moves", gmaxMovesArr);
+
+        newRoot.add("filter_options", filterOptions);
 
         configFile.delete();
         configFile.createNewFile();
