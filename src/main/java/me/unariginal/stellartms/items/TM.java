@@ -26,6 +26,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandlerType;
@@ -141,6 +142,7 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
                                     slot++;
 
                                     if (slot == 2) {
+                                        gui.setSlot(slot, new GuiElementBuilder(Items.BARRIER).setName(TextUtils.deserialize("<red>Cancel")).setCallback((i, clickType, slotActionType) -> gui.close()).build());
                                         slot++;
                                     }
                                 }
