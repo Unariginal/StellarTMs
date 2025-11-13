@@ -49,7 +49,7 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
     public TM(Item.Settings settings, Item polymerItem) {
         super(settings, polymerItem);
         typeModelData.put("blank", PolymerResourcePackUtils.requestModel(polymerItem, Identifier.of(StellarTMs.MOD_ID, "item/tms/blank")));
-        for (ElementalType type : ElementalTypes.INSTANCE.all()) {
+        for (ElementalType type : ElementalTypes.all()) {
             typeModelData.put(type.getName().toLowerCase(), PolymerResourcePackUtils.requestModel(polymerItem, Identifier.of(StellarTMs.MOD_ID, "item/tms/" + type.getName().toLowerCase())));
         }
     }
@@ -58,7 +58,7 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
     public ItemStack getPolymerItemStack(ItemStack original, TooltipType tooltipType, RegistryWrapper.WrapperLookup lookup, @Nullable ServerPlayerEntity viewer) {
         ItemStack out = super.getPolymerItemStack(original, tooltipType, lookup, viewer);
         String moveName = original.getComponents().get(DataComponents.MOVE);
-        MoveTemplate mt = (moveName != null) ? Moves.INSTANCE.getByName(moveName) : null;
+        MoveTemplate mt = (moveName != null) ? Moves.getByName(moveName) : null;
         out.set(DataComponentTypes.CUSTOM_NAME, buildDisplayName(mt));
 
         return out;
@@ -71,11 +71,10 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
         return TextUtils.deserialize(TextUtils.parse(StellarTMs.INSTANCE.config.tm_item_name, mt));
     }
 
-
     @Override
     public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
         String moveName = itemStack.getComponents().get(DataComponents.MOVE);
-        MoveTemplate mt = (moveName != null) ? Moves.INSTANCE.getByName(moveName) : null;
+        MoveTemplate mt = (moveName != null) ? Moves.getByName(moveName) : null;
         String key = (mt == null) ? "blank" : mt.getElementalType().getName().toLowerCase();
         return typeModelData.get(key).value();
     }
@@ -85,7 +84,7 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
         super.appendTooltip(stack, context, tooltip, type);
 
         String moveName = stack.getComponents().get(DataComponents.MOVE);
-        MoveTemplate move = (moveName != null) ? Moves.INSTANCE.getByName(moveName) : null;
+        MoveTemplate move = (moveName != null) ? Moves.getByName(moveName) : null;
         List<String> loreTemplate = (move != null) ? StellarTMs.INSTANCE.config.tm_item_lore : StellarTMs.INSTANCE.config.blank_tm_item_lore;
 
         for (String line : loreTemplate) {
@@ -121,7 +120,7 @@ public class TM extends SimplePolymerItem implements PokemonSelectingItem {
                     if (itemStack.getComponents().contains(DataComponents.MOVE)) {
                         String moveComponent = itemStack.getComponents().get(DataComponents.MOVE);
                         if (moveComponent != null) {
-                            MoveTemplate moveTemplate = Moves.INSTANCE.getByName(moveComponent);
+                            MoveTemplate moveTemplate = Moves.getByName(moveComponent);
                             if (moveTemplate == null) {
                                 SimpleGui gui = new SimpleGui(ScreenHandlerType.HOPPER, player, false);
                                 gui.setTitle(TextUtils.deserialize(TextUtils.parse(StellarTMs.INSTANCE.config.gui_title)));

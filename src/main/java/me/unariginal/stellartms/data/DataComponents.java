@@ -20,7 +20,7 @@ public abstract class DataComponents {
 
     private static boolean isValidMove(String s) {
         if (s == null || s.isBlank()) return false;
-        return s.equalsIgnoreCase(DEFAULT_MOVE) || Moves.INSTANCE.getByName(s) != null;
+        return s.equalsIgnoreCase(DEFAULT_MOVE) || Moves.getByName(s) != null;
     }
 
     private static final Codec<String> MOVE_CODEC = Codec.STRING.flatXmap(

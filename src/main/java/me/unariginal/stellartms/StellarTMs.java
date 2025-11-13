@@ -59,12 +59,12 @@ public class StellarTMs implements ModInitializer {
                                                                                     CommandManager.argument("move", StringArgumentType.string())
                                                                                             .suggests((ctx, builder) -> {
                                                                                                 builder.suggest("blank");
-                                                                                                Moves.INSTANCE.all().forEach(move -> builder.suggest(move.getName().toLowerCase()));
+                                                                                                Moves.all().forEach(move -> builder.suggest(move.getName().toLowerCase()));
                                                                                                 return builder.buildFuture();
                                                                                             })
                                                                                             .executes(ctx -> {
                                                                                                 String move = StringArgumentType.getString(ctx, "move");
-                                                                                                MoveTemplate moveTemplate = Moves.INSTANCE.getByName(move);
+                                                                                                MoveTemplate moveTemplate = Moves.getByName(move);
                                                                                                 if (moveTemplate == null) {
                                                                                                     move = "blank";
                                                                                                 }
@@ -108,12 +108,12 @@ public class StellarTMs implements ModInitializer {
                                                                                     CommandManager.argument("move", StringArgumentType.string())
                                                                                             .suggests((ctx, builder) -> {
                                                                                                 builder.suggest("blank");
-                                                                                                Moves.INSTANCE.all().forEach(move -> builder.suggest(move.getName()));
+                                                                                                Moves.all().forEach(move -> builder.suggest(move.getName()));
                                                                                                 return builder.buildFuture();
                                                                                             })
                                                                                             .executes(ctx -> {
                                                                                                 String move = StringArgumentType.getString(ctx, "move");
-                                                                                                MoveTemplate moveTemplate = Moves.INSTANCE.getByName(move);
+                                                                                                MoveTemplate moveTemplate = Moves.getByName(move);
                                                                                                 if (moveTemplate == null) {
                                                                                                     move = "blank";
                                                                                                 }
@@ -201,7 +201,7 @@ public class StellarTMs implements ModInitializer {
     public List<MoveTemplate> getValidMoves(String filterArg) {
         String[] filters = filterArg.split(";");
 
-        List<MoveTemplate> validMoveTemplates = new ArrayList<>(Moves.INSTANCE.all());
+        List<MoveTemplate> validMoveTemplates = new ArrayList<>(Moves.all());
 
         boolean containsZFilter = false;
         boolean containsMaxFilter = false;
@@ -240,7 +240,7 @@ public class StellarTMs implements ModInitializer {
                     String[] types = finalFilterOption.split(",");
                     List<String> validTypes = new ArrayList<>();
                     for (String type : types) {
-                        if (ElementalTypes.INSTANCE.all().stream().anyMatch(elementalType -> elementalType.getName().equalsIgnoreCase(type))) {
+                        if (ElementalTypes.all().stream().anyMatch(elementalType -> elementalType.getName().equalsIgnoreCase(type))) {
                             validTypes.add(type);
                         }
                     }
@@ -339,7 +339,7 @@ public class StellarTMs implements ModInitializer {
                             containsLevel = true;
                     }
 
-                    Species species = PokemonSpecies.INSTANCE.getByName(split[0]);
+                    Species species = PokemonSpecies.getByName(split[0]);
                     if (species != null) {
                         List<MoveTemplate> validLearnsets = new ArrayList<>();
                         // If nothing, get everything :D
