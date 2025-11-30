@@ -149,7 +149,7 @@ public class TR extends SimplePolymerItem implements PokemonSelectingItem {
                                 }
                                 gui.open();
                             } else {
-                                if (pokemon.getForm().getMoves().getTmMoves().contains(moveTemplate) || pokemon.getSpecies().getMoves().getTmMoves().contains(moveTemplate) || StellarTMs.INSTANCE.config.ignore_learnset) {
+                                if (pokemon.getForm().getMoves().getTmMoves().contains(moveTemplate) || StellarTMs.INSTANCE.config.ignore_learnset) {
                                     for (Move move : pokemon.getMoveSet().getMoves()) {
                                         MoveTemplate template = move.getTemplate();
                                         if (template.getName().equalsIgnoreCase(moveTemplate.getName())) {
